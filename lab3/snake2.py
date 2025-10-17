@@ -2,7 +2,7 @@ import pygame
 import time
 import random
 
-# Initialize Pygame
+# Initialize the game engine
 pygame.init()
 
 # Define colors
@@ -12,25 +12,25 @@ black = (0, 0, 0)
 red = (213, 50, 80)
 green = (0, 255, 0)
 blue = (50, 153, 213)
-purple = (128, 0, 128)
+purple = (160, 32, 240)
 
 # Set display dimensions
-dis_width = 800
-dis_height = 600
+dis_width = 600
+dis_height = 400
 
 # Create the display window
 dis = pygame.display.set_mode((dis_width, dis_height))
-pygame.display.set_caption('Snake Game by Qwen')
+pygame.display.set_caption('Enhanced Snake Game by Qwen')
 
-# Define the clock for controlling the frame rate
+# Define the clock
 clock = pygame.time.Clock()
 
 snake_block = 10
 snake_speed = 15
 
 # Define fonts
-font_style = pygame.font.SysFont("bahnschrift", 25)
-score_font = pygame.font.SysFont("comicsansms", 35)
+font_style = pygame.font.SysFont(None, 50)
+score_font = pygame.font.SysFont(None, 35)
 
 def our_snake(snake_block, snake_list):
     for x in snake_list:
@@ -56,14 +56,16 @@ def gameLoop():
     foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
     foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
 
-    powerup_x = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
-    powerup_y = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+    powerupx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+    powerupy = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
 
-    obstacle_x = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
-    obstacle_y = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+    obstacle_list = []
+    obstacle_count = 5
 
-    powerup_time = pygame.time.get_ticks()
-    powerup_duration = 5000  # Power-up lasts for 5 seconds
+    for _ in range(obstacle_count):
+        ox = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+        oy = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+        obstacle_list.append([ox, oy])
 
     while not game_over:
 
@@ -103,8 +105,10 @@ def gameLoop():
         y1 += y1_change
         dis.fill(blue)
         pygame.draw.rect(dis, green, [foodx, foody, snake_block, snake_block])
-        pygame.draw.rect(dis, purple, [powerup_x, powerup_y, snake_block, snake_block])
-        pygame.draw.rect(dis, red, [obstacle_x, obstacle_y, snake_block, snake_block])
+        pygame.draw.rect(dis, purple, [powerupx, powerupy, snake_block, snake_block])
+
+        for obstacle in obstacle_list:
+            pygame.draw.rect(dis, red, [obstacle[0], obstacle[1], snake_block, snake_block])
 
         snake_Head = []
         snake_Head.append(x1)
@@ -117,15 +121,6 @@ def gameLoop():
             if x == snake_Head:
                 game_close = True
 
-        # Check collision with power-up
-        if (x1 >= powerup_x and x1 < powerup_x + snake_block) and (y1 >= powerup_y and y1 < powerup_y + snake_block):
-            Length_of_snake += 1
-            powerup_time = pygame.time.get_ticks()
-
-        # Check collision with obstacle
-        if (x1 >= obstacle_x and x1 < obstacle_x + snake_block) and (y1 >= obstacle_y and y1 < obstacle_y + snake_block):
-            game_close = True
-
         our_snake(snake_block, snake_List)
 
         pygame.display.update()
@@ -133,11 +128,15 @@ def gameLoop():
         if x1 == foodx and y1 == foody:
             foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
             foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+            Length_of_snake += 1
 
-        # Reset power-up position after it wears off
-        if pygame.time.get_ticks() > powerup_time + powerup_duration:
-            powerup_x = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
-            powerup_y = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+        if x1 == powerupx and y1 == powerupy:
+            powerupx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+            powerupy = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+
+        for obstacle in obstacle_list:
+            if x1 == obstacle[0] and y1 == obstacle[1]:
+                game_close = True
 
         clock.tick(snake_speed)
 

@@ -2,7 +2,7 @@ import pygame
 import time
 import random
 
-# Initialize Pygame
+# Initialize the game engine
 pygame.init()
 
 # Define colors
@@ -14,22 +14,22 @@ green = (0, 255, 0)
 blue = (50, 153, 213)
 
 # Set display dimensions
-dis_width = 800
-dis_height = 600
+dis_width = 600
+dis_height = 400
 
 # Create the display window
 dis = pygame.display.set_mode((dis_width, dis_height))
 pygame.display.set_caption('Snake Game by Qwen')
 
-# Define the clock for controlling the frame rate
+# Define the clock
 clock = pygame.time.Clock()
 
 snake_block = 10
 snake_speed = 15
 
 # Define fonts
-font_style = pygame.font.SysFont("bahnschrift", 25)
-score_font = pygame.font.SysFont("comicsansms", 35)
+font_style = pygame.font.SysFont(None, 50)
+score_font = pygame.font.SysFont(None, 35)
 
 def our_snake(snake_block, snake_list):
     for x in snake_list:
